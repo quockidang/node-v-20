@@ -8,16 +8,32 @@ const app = express();
 app.use(morgan('dev')); // combined, common, short, tiny
 app.use(helmet());
 app.use(compression());
+app.use(express.json())
+app.use(express.urlencoded({
+    extended: true
+}))
+
 // init database
 require('./dbs/init.mongodb');
+//const { checkOverLoad } = require('./helpers/check.connect')
+//checkOverLoad()
 
+// init route
+app.use('/', require('./routes/index'))
 
-app.get('/', (req, res, next) => {
-    const strCompression = "compression hello world";
-    return res.status(200).json({
-        message: "Success",
-        metadata: strCompression.repeat(10000)
+// handle errors
+app.use((req, res, next) => {
+    const error = new Error('Not found');
+    error.status = 404
+    next(error)
+})
+
+app.use((error, req, res, next) => {
+    const statusCode = error.status || 500
+    return res.status(statusCode).json({
+        status: 'error',
+        code: statusCode,
+        message: error.message || 'Internal server error'
     })
 })
-// handle errors
 module.exports = app;
