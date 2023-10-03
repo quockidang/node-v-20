@@ -7,7 +7,7 @@ const KeyTokenService = require('./keyToken.service')
 const { createTokenPair, verifyJWT } = require('../auth/authUtils')
 const { getInfoData } = require('../utils')
 const {
-    BadRequestRequestError, 
+    BadRequestError, 
     ConflictRequestError, 
     AuthFailureError,
     ForbiddenError
@@ -85,7 +85,7 @@ class AccessService {
     static login = async ({ email, password }) => {
         const foundShop = await findByEmail({ email })
         if (! foundShop ) {
-            throw new BadRequestRequestError('Error: Shop not registed');
+            throw new BadRequestError('Error: Shop not registed');
         }
         console.log(foundShop)
         const match = await bcrypt.compare(password, foundShop.password)
@@ -114,7 +114,7 @@ class AccessService {
             // step1: check email exists?
             const holderShop = await shopModel.findOne({ email }).lean()
             if (holderShop) {
-                throw new BadRequestRequestError('Error: Shop already register')
+                throw new BadRequestError('Error: Shop already register')
             }
             const passwordHash = await bcrypt.hash(password, 10)
             const newShop = await shopModel.create({
