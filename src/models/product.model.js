@@ -1,12 +1,13 @@
 'use strict'
 
 const {model, Schema, Types} = require('mongoose'); // Erase if already required
+const slugify = require('slugify')
 
 const DOCUMENT_NAME = 'Product';
 const COLLECTION_NAME = 'Products';
 
 const COLLECTION_CLOTHING_NAME = 'Clothings';
-const COLLECTION_ELECTRON_NAME = 'Electrons';
+const COLLECTION_ELECTRON_NAME = 'Electronics';
 const COLLECTION_FURNITURE_NAME = 'Furnitures';
 
 const productSchema = new Schema({
@@ -28,7 +29,7 @@ const productSchema = new Schema({
         type: Number,
         required: true
     },
-    product_quality: {
+    product_quantity: {
         type: Number,
         required: true
     },

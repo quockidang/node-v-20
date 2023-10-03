@@ -10,4 +10,5 @@ const { apiKey, permission } = require('../auth/checkAuth')
 //router.use(permission('0000'))
 
 router.use('/api/v1', require('./access'))
+router.use('/api/v1/products', require('./product'))
 module.exports = router;
