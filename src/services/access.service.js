@@ -25,36 +25,23 @@ class AccessService {
     /*
         check token used ?
     */
-    static handleRefreshToken = async (refreshToken) => {
-        // check xem token nay da dc su dung chua
-        const foundToken = await KeyTokenService.findByRefreshTokenUsed( refreshToken )
-        if (foundToken) {
-            // xem no la ai
-            const { userId, email } = await verifyJWT( refreshToken, foundToken.privateKey )
-            console.log("[1]-------", { userId, email })
-            // xoa
-            await KeyTokenService.deleteKeyByUserId( userId ) 
-            throw new ForbiddenError('Something went wrong! please relogin')
+    static handleRefreshToken = async ({refreshToken, user, keyStore}) => {
+        const { userId, email } = user
+        if (keyStore.refreshTokensUsed.includes(refreshToken)) {
+            await KeyTokenService.deleteKeyByUserId(userId)
+            throw new ForbiddenError("Somethiing went wrong! Ple relogin")
         }
 
-        // NO, qua ngon
-        const holderToken = await KeyTokenService.findByRefreshToken( refreshToken )
-        if (! holderToken) {
-            throw new AuthFailureError("Shop not register 1")
-        }
+        if ( keyStore.refreshToken != refreshToken ) throw new AuthFailureError("Shop not register 1")
 
-        const { userId, email } = await verifyJWT( refreshToken, holderToken.privateKey )
-        console.log("[2]-------", { userId, email })
         const holderShop = await findByEmail({ email })
-        if (! holderShop) {
-            throw new AuthFailureError("Shop not register 2")
-        }
-
+        if (! holderShop) throw new AuthFailureError("Shop not register 2")
+    
         // create 1 cap token moi
-        const tokens = await createTokenPair({ userId, email }, holderToken.publicKey, holderToken.privateKey)
+        const tokens = await createTokenPair({ userId, email }, keyStore.publicKey, keyStore.privateKey)
 
         // update keytoke with new token
-        await holderToken.updateOne({
+        await keyStore.updateOne({
             $set: {
                 refreshToken: tokens.refreshToken
             },

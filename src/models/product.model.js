@@ -46,6 +46,29 @@ const productSchema = new Schema({
         type: Schema.Types.Mixed,
         required: true
     },
+    product_ratingsAverage: {
+        type: Number,
+        default: 4.5,
+        min: [1, 'Rating must be above 1.0'],
+        max: [5, 'Rating must be above 5.0'],
+        set: (val) => Math.round(val * 10) / 10
+    },
+    product_variations: {
+        type: Array,
+        default: [],
+    },
+    isDraft: {
+        type: Boolean,
+        default: true, // khong dk select ra
+        index: true,
+        select: false // khong lay field nay ra
+    },
+    isPublished: {
+        type: Boolean,
+        default: false, // khong dk select ra
+        index: true,
+        select: false // khong lay field nay ra
+    },
 }, {
     collection: COLLECTION_NAME,
     timestamps: true
