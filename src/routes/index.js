@@ -11,4 +11,5 @@ const { apiKey, permission } = require('../auth/checkAuth')
 
 router.use('/api/v1', require('./access'))
 router.use('/api/v1/products', require('./product'))
+router.use ('/api/v1/comments', require('./comment'))
 module.exports = router;
