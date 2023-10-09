@@ -13,6 +13,12 @@ app.use(express.urlencoded({
     extended: true
 }))
 
+// test redis pubsub
+require('./test/inventory.test');
+
+const productServiceTest = require('./test/product.test')
+productServiceTest.purchaseProduct('product:001', 10)
+
 // init database
 require('./dbs/init.mongodb');
 //const { checkOverLoad } = require('./helpers/check.connect')
